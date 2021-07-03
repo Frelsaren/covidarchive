@@ -11,6 +11,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.4",
     "@material-ui/styles": "^4.11.4",
+    "coronavirusapi-wrapper": "^2.1.6",
     "moment": "^2.29.1",
     "next": "^11.0.1",
     "react": "^17.0.2",

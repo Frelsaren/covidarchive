@@ -7,25 +7,13 @@ import Container from '@material-ui/core/Container'
 
 
 export default function App() {
-  const [selectedCountry, setSelectedCountry] = useState(null)
-  const [selectedMonth, setSelectedMonth] = useState('Jan')
-  useEffect(()=>{
-    if(selectedCountry === null)
-    {
-      fetch('/api/getLocation')
-        .then(response => response.json())
-        .then(result => {
-          if (result['Status']= "Ok") {
-            setSelectedCountry(result["country"])
-          }
-        })
-    }
-  })
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedMonth, setSelectedMonth] = useState('');
   return (
     <>
       <CustomAppBar />
       <Container maxWidth="md">
-        <Search selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry}/>
+        <Search selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} />
       </Container>
     </>
   )
