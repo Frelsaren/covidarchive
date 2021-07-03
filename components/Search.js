@@ -61,7 +61,7 @@ const CountrySelect = (props) => {
         onChange={handleSelect}
       >
         <option disabled value=''></option>
-        {props.countryList.map(country=><option value={country}>{country}</option>)}
+        {props.countryList.map(country=><option key={country} value={country}>{country}</option>)}
       </Select>
     </FormControl>
    );
