@@ -1,26 +1,16 @@
 import Typography from '@material-ui/core/Typography'
 import Grid from '@material-ui/core/Grid'
-import MenuItem from '@material-ui/core/MenuItem'
 import Select from '@material-ui/core/Select'
 import { useEffect, useState } from 'react';
-import { FormControl, makeStyles, FormHelperText, InputLabel } from '@material-ui/core';
+import { FormControl, makeStyles, MenuItem, InputLabel, TextField } from '@material-ui/core';
 import moment from 'moment'
-import { flushSync } from 'react-dom';
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    margin: theme.spacing(1),
-    minWidth: '100%',
-  },
-}));
 
 const Search = (props) => {
   const [countryList, setCountryList] = useState([]);
 
   useEffect(()=>{
-    fetch('/api/getCountries')
-      .then(response => response.json())
-      .then(result => setCountryList(result["countries"]))
+    
   })
 
   return ( 
@@ -41,58 +31,64 @@ const Search = (props) => {
  
 export default Search;
 
-const CountrySelect = (props) => {
-  const classes = useStyles();
-
+const CountrySelect = (props) => {  
   const handleSelect = (e)=>{
-    console.log(e.target.value)
+    props.setSelectedCountry(e.target.value)
   }
 
+
+  useEffect(()=>{
+
+  })
   // Native Select to improve performance
   return ( 
-    
-    <FormControl className={classes.formControl}>
-      <InputLabel id="country-select-label">Country</InputLabel>
-      <Select
-        native
-        labelId="country-select-label"
-        id="country-select"
-        value={props.selectedShortCountry}
-        onChange={handleSelect}
-      >
-        <option disabled value=''></option>
-        {props.countryList.map(country=><option key={country} value={country}>{country}</option>)}
-      </Select>
-    </FormControl>
+    <TextField
+      id="country-select"
+      select
+      label="Country"
+      fullWidth
+      SelectProps={{
+        native: true,
+      }}
+      value={props.selectedCountry ? props.selectedCountry : ''}
+      onChange={handleSelect}
+    >
+      <option disabled value=''></option>
+      {props.countries ? props.countries.map((country) => (
+        <option key={country} value={country}>
+          {country}
+        </option>
+      )) : null}
+    </TextField>
    );
 }
 
 const MonthSelect = (props) => {
   const months = moment.months();
-  const monthsShort = moment.monthsShort();
-
-  const classes = useStyles();
-
+  const shortMonths = moment.monthsShort();
   const handleSelect = (e)=>{
-    props.setSelectedMonth(e.target.value);
+    if(props.selectedMonth!==e.target.value) props.setSelectedMonth(e.target.value);
   }
   return ( 
-    
-    <FormControl className={classes.formControl}>
-      <InputLabel id="month-select-label">Month</InputLabel>
-      <Select
-        native
-        labelId="month-select-label"
-        id="month-select"
-        value={props.selectedMonth ? props.selectedMonth : ''}
-        onChange={handleSelect}
-      >
-        <option disabled value=''></option>
-        {months.map((month, index)=>{
-          return <option key={monthsShort[index]} value={monthsShort[index]}>{month}</option>
-          })}
-      </Select>
-    </FormControl>
+
+    <TextField
+      id="month-select"
+      select
+      label="Month"
+      fullWidth
+      SelectProps={{
+        native: true,
+      }}
+      value={props.selectedMonth ? props.selectedMonth : ''}
+      onChange={handleSelect}
+    >
+      <option disabled value=''></option>
+      {months ? months.map((month, index) => (
+        <option key={shortMonths[index]} value={shortMonths[index]}>
+          {month}
+        </option>
+      )) : null}
+    </TextField>
    );
 }
  
