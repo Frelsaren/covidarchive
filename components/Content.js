@@ -5,7 +5,7 @@ const Content = (props) => {
   useEffect(()=>{
     if(props.month && props.country)
     {
-      console.log([props.month, props.country])
+      
     }
   })
   return ( 
