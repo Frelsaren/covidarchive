@@ -7,25 +7,19 @@ import Container from '@material-ui/core/Container'
 import { LinearProgress } from '@material-ui/core';
 
 const useStyles = makeStyles({
-  root: {
-      padding: 0,
-      margin: 0,
-      fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif"
-  },
   content: {
     marginTop: 20
   }
 })
 
 export default function App() {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [token, setToken] = useState()
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedMonth, setSelectedMonth] = useState('');
-  const [confirmed, setConfirmed] = useState();
-  const [deaths, setDeaths] = useState();
-  const [recovered, setRecovered] = useState();
-
+  const [rawConfirmed, setRawConfirmed] = useState();
+  const [rawDeaths, setRawDeaths] = useState();
+  const [rawRecovered, setRawRecovered] = useState();
   const [countries, setCountries] = useState();
   
   const classes = useStyles();
@@ -36,7 +30,7 @@ export default function App() {
         .then(response => response.json())
         .then(result => setToken(result))
     }
-    if(confirmed === undefined && token !== undefined){
+    if(rawConfirmed === undefined && token !== undefined){
       await fetch('/api/getConfirmed', {
         "headers": {'Content-Type': 'application/json'},
         "method": "POST",
@@ -44,7 +38,7 @@ export default function App() {
       })
         .then(response => response.json())
         .then(result => {
-          setConfirmed(result);
+          setRawConfirmed(result);
           const countryList = []
           result.map(item =>{
             !countryList.includes(item["country_region"]) ? countryList.push(item["country_region"]) : null
@@ -52,7 +46,7 @@ export default function App() {
           setCountries(countryList)
         })
     }
-    if(deaths === undefined && token !== undefined){
+    if(rawDeaths === undefined && token !== undefined){
       await fetch('/api/getDeaths', {
         "headers": {'Content-Type': 'application/json'},
         "method": "POST",
@@ -60,10 +54,10 @@ export default function App() {
       })
         .then(response => response.json())
         .then(result => {
-          setDeaths(result);
+          setRawDeaths(result);
         })
     }
-    if(recovered === undefined && token !== undefined){
+    if(rawRecovered === undefined && token !== undefined){
       await fetch('/api/getRecovered', {
         "headers": {'Content-Type': 'application/json'},
         "method": "POST",
@@ -71,8 +65,12 @@ export default function App() {
       })
         .then(response => response.json())
         .then(result => {
-          setRecovered(result);
+          setRawRecovered(result);
         })
+    }
+    if(rawConfirmed && rawDeaths && rawRecovered) setLoading(false)
+    if(selectedCountry !== '' && selectedMonth !== ''){
+
     }
   })
   return (
@@ -80,8 +78,8 @@ export default function App() {
       <CustomAppBar />
       {loading ? <LinearProgress /> : null }
       <Container maxWidth="md" className={ classes.content }>
-        <Search token={token} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} countries={countries} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} />
-        <Content month={selectedMonth.toLowerCase()} country={selectedCountry} confirmed={confirmed} deaths={deaths} recovered={recovered}/> 
+        {rawConfirmed ? <Search token={token} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} countries={countries} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} />:null}
+        {selectedCountry !== '' && selectedMonth !== '' && rawConfirmed && rawDeaths && rawRecovered ? <Content month={selectedMonth} confirmed={rawConfirmed.filter(item => item["country_region"] === selectedCountry)} deaths={rawDeaths.filter(item => item["country_region"] === selectedCountry)} recovered={rawRecovered.filter(item => item["country_region"] === selectedCountry)}/> : null} 
       </Container>
     </div>
   )
