@@ -1,17 +1,26 @@
-import { Grid, Typography } from "@material-ui/core";
+import { Grid, makeStyles, Typography } from "@material-ui/core";
 import { useEffect, useState } from "react";
+import DataChart from '../components/DataChart' 
 
+const useStyles = makeStyles({
+  root: {
+    marginTop: 5
+  }
+})
 
 const Content = (props) => {  
+  const classes = useStyles()
   return ( 
     <Grid
+      className={ classes.root }
       container
       direction="column"
       justify="space-between"
       alignItems="center"
     >
-    <Numbers {...props}/>
-  </Grid>
+      <DataChart className={ classes.chart} {...props}/>
+      <Numbers {...props} />
+    </Grid>
     
   
   );
@@ -20,9 +29,6 @@ const Content = (props) => {
 export default Content;
 
 const Numbers = (props) => {
-  const [confirmed, setConfirmed] = useState(0)
-  const [deaths, setDeaths] = useState(0)
-  const [recovered, setRecovered] = useState(0)
 
   return ( 
     <>
@@ -37,7 +43,7 @@ const Numbers = (props) => {
       <Grid
         container
         direction="row"
-        justify="space-evenly"
+        justify="space-around"
         alignItems="center"
       >
         <Value label="Deaths" data={props.deaths} month={props.month}/>

@@ -8,7 +8,7 @@ import { LinearProgress } from '@material-ui/core';
 
 const useStyles = makeStyles({
   content: {
-    marginTop: 20
+    marginTop: "2.5%"
   }
 })
 
@@ -23,6 +23,8 @@ export default function App() {
   const [countries, setCountries] = useState();
   
   const classes = useStyles();
+
+
 
   useEffect(async()=>{
     if(!token || new Date(token["expiration"]) < new Date()) {
@@ -74,13 +76,13 @@ export default function App() {
     }
   })
   return (
-    <div>
-      <CustomAppBar />
+    <>
+      <CustomAppBar/>
       {loading ? <LinearProgress /> : null }
       <Container maxWidth="md" className={ classes.content }>
         {rawConfirmed ? <Search token={token} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} countries={countries} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} />:null}
-        {selectedCountry !== '' && selectedMonth !== '' && rawConfirmed && rawDeaths && rawRecovered ? <Content month={selectedMonth} confirmed={rawConfirmed.filter(item => item["country_region"] === selectedCountry)} deaths={rawDeaths.filter(item => item["country_region"] === selectedCountry)} recovered={rawRecovered.filter(item => item["country_region"] === selectedCountry)}/> : null} 
+        {selectedCountry !== '' && selectedMonth !== '' && rawConfirmed && rawDeaths && rawRecovered ? <Content month={selectedMonth} country={selectedCountry} confirmed={rawConfirmed.filter(item => item["country_region"] === selectedCountry)} deaths={rawDeaths.filter(item => item["country_region"] === selectedCountry)} recovered={rawRecovered.filter(item => item["country_region"] === selectedCountry)}/> : null} 
       </Container>
-    </div>
+    </>
   )
 }

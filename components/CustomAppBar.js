@@ -4,11 +4,11 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 
 const useStyles = makeStyles({
-  Toolbar: {
+  root: {
     backgroundColor: 'white',
     border: 0,
     color: '#37373b',
-    // padding: '0 30px',
+    padding: '0 30px',
   },
 });
 
@@ -16,7 +16,7 @@ const CustomAppBar = props => {
     const classes = useStyles()
     return ( 
       <AppBar position="static">
-        <Toolbar className={classes.Toolbar}>
+        <Toolbar className={classes.root}>
           <Typography variant="h5" >
             CovArchive2020
           </Typography>
