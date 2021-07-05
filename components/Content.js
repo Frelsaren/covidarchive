@@ -61,6 +61,7 @@ const Value = (props) => {
           count = item[Object.keys(item)[index]]
         }
       })
+      if(!countOnMonthStart) countOnMonthStart = 0
       newValue += count-countOnMonthStart;
     })
     setValue(newValue)
