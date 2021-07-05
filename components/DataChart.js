@@ -19,28 +19,6 @@ const useStyles = makeStyles({
   }
 })
 
-const legendStyles = () => ({
-  root: {
-    display: 'flex',
-    margin: 'auto',
-    flexDirection: 'row',
-  },
-});
-
-const legendRootBase = ({ classes, ...restProps }) => (
-  <Legend.Root {...restProps} className={classes.root} />
-);
-const Root = withStyles(legendStyles, { name: 'LegendRoot' })(legendRootBase);
-const legendLabelStyles = () => ({
-  label: {
-    whiteSpace: 'nowrap',
-  },
-});
-const legendLabelBase = ({ classes, ...restProps }) => (
-  <Legend.Label className={classes.label} {...restProps} />
-);
-const Label = withStyles(legendLabelStyles, { name: 'LegendLabel' })(legendLabelBase);
-
 
 const DataChart = (props) => {
   const classes = useStyles();
@@ -70,32 +48,7 @@ const DataChart = (props) => {
 
   return ( <>
     {data ? <Paper className={ classes.chart }>
-      <Chart data={data}>
-        <Legend position="top" rootComponent={Root} labelComponent={Label} />
-        <ArgumentAxis> {/* or ValueAxis, or CommonAxisSettings */}
-          <Label template={<></>}/>
-        </ArgumentAxis>
-        <ValueAxis
-          max={topNumber}
-        />
-        <BarSeries
-          name="Confirmed"
-          valueField="Confirmed"
-          argumentField="Date"
-        />
-        <BarSeries
-          name="Deaths"
-          valueField="Deaths"
-          argumentField="Date"
-        />
-        <BarSeries
-          name="Recovered"
-          valueField="Recovered"
-          argumentField="Date"
-        />
-        <Animation />
-        
-      </Chart>
+      
     </Paper> : null}
   </> );
 }
