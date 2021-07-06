@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { makeStyles, Paper } from '@material-ui/core';
+import { makeStyles, Paper, Box } from '@material-ui/core';
 import generateChartData from '../functions/prepareData'
 import { Bar } from 'react-chartjs-2'
 import moment from 'moment'
@@ -18,6 +18,7 @@ const DataChart = (props) => {
   const [dataSet, setDataSet] = useState()
 
   const options = {
+    maintainAspectRatio: false,
     scales: {
       xAxes: [{
         stacked: true
@@ -69,7 +70,9 @@ const DataChart = (props) => {
 
   return ( <>
     {dataSet ? <Paper className={ classes.paper }>
-      <Bar data={dataSet}options={options} />
+      <Box width={"100%"} height={"100%"} padding={"10px"}>
+        <Bar data={dataSet} height={450} options={options} />
+      </Box>
     </Paper> : null}
   </> );
 }
