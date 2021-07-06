@@ -1,4 +1,4 @@
-import { Grid, makeStyles, Typography } from "@material-ui/core";
+import { Grid, makeStyles, Typography, Box } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import DataChart from '../components/DataChart' 
 
@@ -18,7 +18,7 @@ const Content = (props) => {
       justify="space-between"
       alignItems="center"
     >
-      <DataChart className={ classes.chart} {...props}/>
+      <DataChart {...props}/>
       <Numbers {...props} />
     </Grid>
     

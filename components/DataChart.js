@@ -18,7 +18,7 @@ const DataChart = (props) => {
   const [dataSet, setDataSet] = useState()
 
   const options = {
-    maintainAspectRatio: false,
+    maintainAspectRation: false,
     scales: {
       xAxes: [{
         stacked: true
@@ -70,25 +70,11 @@ const DataChart = (props) => {
 
   return ( <>
     {dataSet ? <Paper className={ classes.paper }>
-      <Box width={"100%"} height={"100%"} padding={"10px"}>
-        <Bar data={dataSet} height={450} options={options} />
+      <Box padding={"10px"}>
+        <Bar data={dataSet}  options={options} />
       </Box>
     </Paper> : null}
   </> );
 }
  
 export default DataChart;
-
-const getTopNumber = (data)=>{
-  var top = 0;
-  data.map(item=>{
-    if(item["Confirmed"] > top) top=item["Confirmed"]
-    if(item["Deaths"] > top) top=item["Deaths"]
-    if(item["Recovered"] > top) top=item["Recovered"]
-  })
-  return top
-}
-
-function capitalizeFirstLetter(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1);
-}

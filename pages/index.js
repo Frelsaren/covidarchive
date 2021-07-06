@@ -27,7 +27,7 @@ export default function App() {
   
   const classes = useStyles();
 
-  useEffect(async ()=>{
+  useEffect(()=>{
     const tokenCookie = cookies.get('token')
     const expirationCookie = cookies.get('expiration')
     if(expirationCookie === undefined ||new Date(expirationCookie)<new Date()) {
@@ -44,10 +44,10 @@ export default function App() {
       
   }, [])
 
-  useEffect(async()=>{
+  useEffect(()=>{
     if(token !== undefined) {
       if(rawConfirmed === undefined){
-        await fetch('/api/getConfirmed', {
+        fetch('/api/getConfirmed', {
           "headers": {'Content-Type': 'application/json'},
           "method": "POST",
           "body": JSON.stringify({"token": token["token"]})
@@ -63,7 +63,7 @@ export default function App() {
           })
       }
       if(rawDeaths === undefined){
-        await fetch('/api/getDeaths', {
+        fetch('/api/getDeaths', {
           "headers": {'Content-Type': 'application/json'},
           "method": "POST",
           "body": JSON.stringify({"token": token["token"]})
@@ -74,7 +74,7 @@ export default function App() {
           })
       }
       if(rawRecovered === undefined){
-        await fetch('/api/getRecovered', {
+        fetch('/api/getRecovered', {
           "headers": {'Content-Type': 'application/json'},
           "method": "POST",
           "body": JSON.stringify({"token": token["token"]})
