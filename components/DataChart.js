@@ -1,128 +1,81 @@
-import {
-    Chart,
-    ArgumentAxis,
-    ValueAxis,
-    BarSeries,
-    Title,
-    Legend,
-  } from '@devexpress/dx-react-chart-material-ui';
-import { Stack, Animation } from '@devexpress/dx-react-chart';
 import { useEffect, useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { makeStyles, Paper } from '@material-ui/core';
-
+import generateChartData from '../functions/prepareData'
+import { Bar } from 'react-chartjs-2'
+import moment from 'moment'
 const useStyles = makeStyles({
-  chart: {
+  paper: {
     marginTop: 30,
     minWidth: "100%",
-    maxWidth: "100%"
-  }
+    maxWidth: "100%",
+  },
 })
 
 
 const DataChart = (props) => {
   const classes = useStyles();
-  const [data,setData] = useState([]);
-  const [topNumber, setTopNumber] = useState(0);
+  const [dataSet, setDataSet] = useState()
+
+  const options = {
+    scales: {
+      xAxes: [{
+        stacked: true
+      }],
+      yAxes: [{
+        stacked: true
+      }]
+     }
+ }
 
   useEffect(()=>{
     const newData = generateChartData(props.confirmed, props.deaths, props.recovered, props.month)
-    if (data === undefined || newData === undefined) {
-      setData(newData)
-    } else if (data.length === newData.length) {
-      var toUpdate = false
-      data.map((day,index) => {
-        Object.keys(day).map(key=>{
-          if(day[key] !== newData[index][key]) {
-            toUpdate=true
-          }
-        })
-      })
-      if(toUpdate)setData(newData)
+    var newDataSet = {
+      labels: newData.map((el,index) =>{
+        if(index===0 ||index === newData.length-1) {
+          const shortmonths = moment.monthsShort().map((month)=>month.toLowerCase());
+          const month = el["Date"].slice(0,3)
+          var monthIndex = shortmonths.indexOf(month)+1
+          monthIndex = monthIndex.toString().length === 1 ? "0" + monthIndex : monthIndex
+          console.log(monthIndex.toString().length);
+          const date = new Date(2020, monthIndex, el["Date"].slice(3,5))
+
+          return el["Date"].slice(3,5) + "." + monthIndex+ ".2020"
+        } 
+        return ""}),
+      datasets: [
+        {
+          stack: 'stacked',
+          label: 'Confirmed',
+          data: newData.map(el =>el["Confirmed"]),
+          backgroundColor: "#F85F73"
+        }, 
+        {
+          stack: 'stacked',
+          label: 'Deaths',
+          data: newData.map(el =>el["Deaths"]),
+          backgroundColor: "#000000" 
+        },
+        {
+          stack: 'stacked',
+          label: 'Recovered',
+          data: newData.map(el =>el["Recovered"]),
+          backgroundColor: "#42C5D5"
+        },
+
+      ]
     }
-    else {
-      setData(newData)
-    }
-    setTopNumber(getTopNumber(data)*1.25)
-  })
+    setDataSet(newDataSet)
+    }, [props.confirmed, props.deaths, props.recovered])
 
   return ( <>
-    {data ? <Paper className={ classes.chart }>
-      
+    {dataSet ? <Paper className={ classes.paper }>
+      <Bar data={dataSet}options={options} />
     </Paper> : null}
   </> );
 }
  
 export default DataChart;
-
-const generateChartData = (confirmed, deaths, recovered, month)=>{
-  const newData = [];
-  let totalConfirmedCountOnMonthStart = 0;
-  confirmed.map(item=>{
-    let countOnMonthStart;
-    Object.keys(item).map((key,index)=>{
-      if(key.match(new RegExp(month.toLowerCase() + "\\d{2}2020"))){
-        if(!countOnMonthStart && Object.keys(item)[index-1].match(new RegExp("(?<!"+month.toLowerCase()+")\\d{2}2020"))) countOnMonthStart = item[Object.keys(item)[index-1]]
-        if(newData.filter(e=>e["Date"]===key).length === 0) {
-          newData.push({"Date": key,
-                        "Confirmed": item[key] ,
-                        "Deaths": 0,
-                        "Recovered": 0})
-        } else {
-          newData.filter(entry=>entry["Date"]===key)[0]["Confirmed"] += item[key] 
-        }
-      }
-    })
-    totalConfirmedCountOnMonthStart += countOnMonthStart ? countOnMonthStart : 0
-  })
-
-  let totalDeathCountOnMonthStart = 0;
-  deaths.map(item=>{
-    let countOnMonthStart;
-    Object.keys(item).map((key,index)=>{
-      if(key.match(new RegExp(month.toLowerCase() + "\\d{2}2020"))){
-        if(!countOnMonthStart && Object.keys(item)[index-1].match(new RegExp("(?<!"+month.toLowerCase()+")\\d{2}2020"))) countOnMonthStart = item[Object.keys(item)[index-1]]
-        if(newData.filter(e=>e["Date"]===key).length === 0) {
-          newData.push({"Date": key,
-                        "Confirmed": item[key],
-                        "Deaths": 0,
-                        "Recovered": 0})
-        } else {
-          newData.filter(entry=>entry["Date"]===key)[0]["Deaths"] += item[key] 
-        }
-      }
-    })
-    totalDeathCountOnMonthStart += countOnMonthStart ? countOnMonthStart : 0
-  })
-  let totalRecoveredCountOnMonthStart = 0;
-  recovered.map(item=>{
-    let countOnMonthStart;
-    Object.keys(item).map((key,index)=>{
-      if(key.match(new RegExp(month.toLowerCase() + "\\d{2}2020"))){
-        if(!countOnMonthStart && Object.keys(item)[index-1].match(new RegExp("(?<!"+month.toLowerCase()+")\\d{2}2020"))) countOnMonthStart = item[Object.keys(item)[index-1]]
-        if(newData.filter(e=>e["Date"]===key).length === 0) {
-          newData.push({"Date": key,
-                        "Confirmed": 0,
-                        "Deaths": 0,
-                        "Recovered": item[key]})
-        } else {
-          newData.filter(entry=>entry["Date"]===key)[0]["Recovered"] += item[key] 
-        }
-      }
-    })
-    totalRecoveredCountOnMonthStart += countOnMonthStart ? countOnMonthStart : 0
-  })
-  
-  newData.reverse()
-  newData.map((entry,index)=>{
-    entry["Confirmed"] -= index < newData.length-1 ? entry["Confirmed"] > newData[index+1]["Confirmed"] ? newData[index+1]["Confirmed"] : entry["Confirmed"]  : entry["Confirmed"] > totalConfirmedCountOnMonthStart ? totalConfirmedCountOnMonthStart : entry["Confirmed"]
-    entry["Deaths"] -= index < newData.length-1 ? entry["Deaths"] > newData[index+1]["Deaths"] ? newData[index+1]["Deaths"] : entry["Deaths"]  : entry["Deaths"] > totalDeathCountOnMonthStart ? totalDeathCountOnMonthStart : entry["Deaths"]
-    entry["Recovered"] -= index < newData.length-1 ? entry["Recovered"] > newData[index+1]["Recovered"] ? newData[index+1]["Recovered"] : entry["Recovered"]  : entry["Recovered"] > totalRecoveredCountOnMonthStart ? totalRecoveredCountOnMonthStart : entry["Recovered"]
-  })
-  newData.reverse()
-  
-  return newData
-}
 
 const getTopNumber = (data)=>{
   var top = 0;
@@ -132,4 +85,8 @@ const getTopNumber = (data)=>{
     if(item["Recovered"] > top) top=item["Recovered"]
   })
   return top
+}
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }

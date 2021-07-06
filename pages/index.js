@@ -71,9 +71,6 @@ export default function App() {
         })
     }
     if(rawConfirmed && rawDeaths && rawRecovered) setLoading(false)
-    if(selectedCountry !== '' && selectedMonth !== ''){
-
-    }
   })
   return (
     <>
@@ -81,7 +78,7 @@ export default function App() {
       {loading ? <LinearProgress /> : null }
       <Container maxWidth="md" className={ classes.content }>
         {rawConfirmed ? <Search token={token} selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} countries={countries} selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} />:null}
-        {selectedCountry !== '' && selectedMonth !== '' && rawConfirmed && rawDeaths && rawRecovered ? <Content month={selectedMonth} country={selectedCountry} confirmed={rawConfirmed.filter(item => item["country_region"] === selectedCountry)} deaths={rawDeaths.filter(item => item["country_region"] === selectedCountry)} recovered={rawRecovered.filter(item => item["country_region"] === selectedCountry)}/> : null} 
+        {selectedCountry !== '' && selectedMonth !== '' && !loading ? <Content month={selectedMonth} country={selectedCountry} confirmed={rawConfirmed.filter(item => item["country_region"] === selectedCountry)} deaths={rawDeaths.filter(item => item["country_region"] === selectedCountry)} recovered={rawRecovered.filter(item => item["country_region"] === selectedCountry)}/> : null} 
       </Container>
     </>
   )
