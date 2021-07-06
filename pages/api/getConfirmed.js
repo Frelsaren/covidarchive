@@ -4,7 +4,7 @@ export default async function handler(req,res) {
 
     myHeaders.append("Content-Type", "application/json");
     myHeaders.append("Authorization", "Bearer " + req.body["token"])
-
+    
     var requestOptions = {
     method: 'GET',
     headers: myHeaders,

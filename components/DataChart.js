@@ -37,7 +37,6 @@ const DataChart = (props) => {
           const month = el["Date"].slice(0,3)
           var monthIndex = shortmonths.indexOf(month)+1
           monthIndex = monthIndex.toString().length === 1 ? "0" + monthIndex : monthIndex
-          console.log(monthIndex.toString().length);
           const date = new Date(2020, monthIndex, el["Date"].slice(3,5))
 
           return el["Date"].slice(3,5) + "." + monthIndex+ ".2020"

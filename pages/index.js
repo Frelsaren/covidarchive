@@ -5,12 +5,15 @@ import Content from '../components/Content'
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container'
 import { LinearProgress } from '@material-ui/core';
+import Cookies from 'universal-cookie';
 
 const useStyles = makeStyles({
   content: {
     marginTop: "2.5%"
   }
 })
+
+const cookies = new Cookies();
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -24,52 +27,66 @@ export default function App() {
   
   const classes = useStyles();
 
-
+  useEffect(async ()=>{
+    const tokenCookie = cookies.get('token')
+    const expirationCookie = cookies.get('expiration')
+    if(expirationCookie === undefined ||new Date(expirationCookie)<new Date()) {
+      fetch('/api/getToken')
+        .then(response => response.json())
+        .then(result => {
+          setToken(result);
+          cookies.set("token", result["token"]);
+          cookies.set("expiration", result["expiration"])
+        })
+    } else {
+      setToken({"token": tokenCookie, "expiration": expirationCookie})
+    }
+      
+  }, [])
 
   useEffect(async()=>{
-    if(!token || new Date(token["expiration"]) < new Date()) {
-      await fetch('/api/getToken')
-        .then(response => response.json())
-        .then(result => setToken(result))
-    }
-    if(rawConfirmed === undefined && token !== undefined){
-      await fetch('/api/getConfirmed', {
-        "headers": {'Content-Type': 'application/json'},
-        "method": "POST",
-        "body": JSON.stringify({"token": token["token"]})
-      })
-        .then(response => response.json())
-        .then(result => {
-          setRawConfirmed(result);
-          const countryList = []
-          result.map(item =>{
-            !countryList.includes(item["country_region"]) ? countryList.push(item["country_region"]) : null
+    if(token !== undefined) {
+      if(rawConfirmed === undefined){
+        await fetch('/api/getConfirmed', {
+          "headers": {'Content-Type': 'application/json'},
+          "method": "POST",
+          "body": JSON.stringify({"token": token["token"]})
+        })
+          .then(response => response.json())
+          .then(result => {
+            setRawConfirmed(result);
+            const countryList = []
+            result.map(item =>{
+              !countryList.includes(item["country_region"]) ? countryList.push(item["country_region"]) : null
+            })
+            setCountries(countryList)
           })
-          setCountries(countryList)
+      }
+      if(rawDeaths === undefined){
+        await fetch('/api/getDeaths', {
+          "headers": {'Content-Type': 'application/json'},
+          "method": "POST",
+          "body": JSON.stringify({"token": token["token"]})
         })
-    }
-    if(rawDeaths === undefined && token !== undefined){
-      await fetch('/api/getDeaths', {
-        "headers": {'Content-Type': 'application/json'},
-        "method": "POST",
-        "body": JSON.stringify({"token": token["token"]})
-      })
-        .then(response => response.json())
-        .then(result => {
-          setRawDeaths(result);
+          .then(response => response.json())
+          .then(result => {
+            setRawDeaths(result);
+          })
+      }
+      if(rawRecovered === undefined){
+        await fetch('/api/getRecovered', {
+          "headers": {'Content-Type': 'application/json'},
+          "method": "POST",
+          "body": JSON.stringify({"token": token["token"]})
         })
+          .then(response => response.json())
+          .then(result => {
+            setRawRecovered(result);
+          })
+      }
     }
-    if(rawRecovered === undefined && token !== undefined){
-      await fetch('/api/getRecovered', {
-        "headers": {'Content-Type': 'application/json'},
-        "method": "POST",
-        "body": JSON.stringify({"token": token["token"]})
-      })
-        .then(response => response.json())
-        .then(result => {
-          setRawRecovered(result);
-        })
-    }
+  },[token])
+  useEffect(()=>{
     if(rawConfirmed && rawDeaths && rawRecovered) setLoading(false)
   })
   return (
