@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { makeStyles, Paper, Box } from '@material-ui/core';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+
+import { makeStyles, Paper, Box, withStyles, useTheme } from '@material-ui/core';
 import generateChartData from '../functions/prepareData'
 import { Bar } from 'react-chartjs-2'
 import moment from 'moment'
@@ -14,20 +15,36 @@ const useStyles = makeStyles({
 
 
 const DataChart = (props) => {
+  const theme = useTheme();
+  const smallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const classes = useStyles();
   const [dataSet, setDataSet] = useState()
+  const [options, setOptions] = useState()
 
-  const options = {
-    maintainAspectRation: false,
-    scales: {
-      xAxes: [{
-        stacked: true
-      }],
-      yAxes: [{
-        stacked: true
-      }]
-     }
- }
+  useEffect(()=>{
+    
+    if(smallScreen) setOptions({
+      aspectRatio: 1,
+      scales: {
+        xAxes: [{
+          stacked: true
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+       }
+    })
+    else setOptions({
+      scales: {
+        xAxes: [{
+          stacked: true
+        }],
+        yAxes: [{
+          stacked: true
+        }]
+       }
+    })
+  },[smallScreen])
 
   useEffect(()=>{
     const newData = generateChartData(props.confirmed, props.deaths, props.recovered, props.month)
