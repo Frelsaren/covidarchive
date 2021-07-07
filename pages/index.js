@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react'
 import CustomAppBar from '../components/CustomAppBar';
 import Search from '../components/Search'
 import Content from '../components/Content'
-import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container'
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress, makeStyles } from '@material-ui/core';
 import Cookies from 'universal-cookie';
 
 const useStyles = makeStyles({
@@ -15,7 +14,7 @@ const useStyles = makeStyles({
 
 const cookies = new Cookies();
 
-export default function App() {
+export default function App() {  
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState()
   const [selectedCountry, setSelectedCountry] = useState('');
@@ -26,6 +25,14 @@ export default function App() {
   const [countries, setCountries] = useState();
   
   const classes = useStyles();
+
+  useEffect(()=>{
+    fetch('/api/getLocation')
+      .then(response => response.json())
+      .then(result => {
+        if(result["status"] === "Ok" && countries.includes(result["country"])) setSelectedCountry()
+      })
+  }, [countries])
 
   useEffect(()=>{
     const tokenCookie = cookies.get('token')
