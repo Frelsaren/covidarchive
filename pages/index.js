@@ -27,14 +27,6 @@ export default function App() {
   const classes = useStyles();
 
   useEffect(()=>{
-    fetch('/api/getLocation')
-      .then(response => response.json())
-      .then(result => {
-        if(result["status"] === "Ok" && countries.includes(result["country"])) setSelectedCountry()
-      })
-  }, [countries])
-
-  useEffect(()=>{
     const tokenCookie = cookies.get('token')
     const expirationCookie = cookies.get('expiration')
     if(expirationCookie === undefined ||new Date(expirationCookie)<new Date()) {
